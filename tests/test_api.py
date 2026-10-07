@@ -1,8 +1,3 @@
-"""Smoke tests: upload KML + shapefile zip, info, measurements, errors."""
-import os
-import tempfile
-import zipfile
-
 import geopandas as gpd
 from fastapi.testclient import TestClient
 from shapely.geometry import LineString, Point, Polygon

@@ -1,4 +1,3 @@
-"""Pydantic response schemas."""
 from typing import Any, Optional
 from pydantic import BaseModel
 
@@ -20,7 +19,6 @@ class FeatureMeasurement(BaseModel):
     crs: Optional[str] = None
     properties: dict[str, Any] = {}
     measurement: Optional[dict[str, Any]] = None
-    # Raw GeoJSON geometry, useful for clients that want to render
     geometry: Optional[dict[str, Any]] = None
 
 

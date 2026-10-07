@@ -1,4 +1,3 @@
-"""Measurement logic: area for polygons, length for linestrings, graceful fallback."""
 import json
 from typing import Any
 
@@ -27,21 +26,15 @@ def _measure_single(geom_type: str, geom_projected) -> dict[str, Any] | None:
         length = float(geom_projected.length)
         return {"type": "length", "value": length, "unit": "meters", "km": length / 1_000}
     if geom_type in {"Point", "MultiPoint"}:
-        return None  # No measurement required for points
-    # Anything else (GeometryCollection, etc.): graceful, no crash
+        return None
     return {"type": "unsupported", "value": None, "unit": None, "note": f"No measurement for {geom_type}"}
 
 
 def build_features_with_measurements(gdf: gpd.GeoDataFrame) -> tuple[list[dict], str, str | None]:
-    """
-    Returns (features, source_crs, measurement_crs).
-    Each feature: {index, geometry_type, geometry(geojson), properties, measurements}
-    """
     source_crs = normalize_crs(gdf.crs)
     measurement_crs = select_measurement_crs(gdf)
     projected = gdf.to_crs(measurement_crs)
 
-    # Properties = all non-geometry columns
     prop_cols = [c for c in gdf.columns if c != gdf.geometry.name]
 
     features: list[dict] = []
@@ -51,14 +44,14 @@ def build_features_with_measurements(gdf: gpd.GeoDataFrame) -> tuple[list[dict],
         geom_type = geom.geom_type if geom is not None else "Unknown"
         try:
             measurement = _measure_single(geom_type, proj_geom)
-        except Exception as exc:  # never let one bad geometry kill the file
+        except Exception as exc:
             measurement = {"type": "unsupported", "value": None, "unit": None, "note": f"Error: {exc}"}
 
         props = {}
         for col in prop_cols:
             val = gdf.iloc[idx][col]
             try:
-                json.dumps(val)  # ensure JSON-serializable
+                json.dumps(val)
                 props[col] = val
             except TypeError:
                 props[col] = str(val)

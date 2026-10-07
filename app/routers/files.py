@@ -1,4 +1,3 @@
-"""POST /api/files/ | GET /api/files/{id}/ | GET /api/files/{id}/measurements/"""
 import json
 import shutil
 import uuid

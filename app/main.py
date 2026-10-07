@@ -1,4 +1,3 @@
-"""FastAPI entrypoint."""
 from fastapi import FastAPI
 
 from app import models

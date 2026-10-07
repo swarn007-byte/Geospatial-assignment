@@ -1,4 +1,3 @@
-"""DB models."""
 import uuid
 from datetime import datetime, timezone
 
@@ -16,11 +15,10 @@ class GeoFile(Base):
 
     id = Column(String, primary_key=True, default=lambda: uuid.uuid4().hex[:12])
     filename = Column(String, nullable=False)
-    file_type = Column(String, nullable=False)  # shapefile | kml
+    file_type = Column(String, nullable=False)
     crs = Column(String, nullable=True)
     feature_count = Column(Integer, default=0)
-    status = Column(String, default="PROCESSING")  # PROCESSING | COMPLETED | FAILED
+    status = Column(String, default="PROCESSING")
     error = Column(Text, nullable=True)
-    # JSON-encoded list of features: [{index, geometry_type, geometry(geojson), properties, measurements}]
     features_json = Column(Text, nullable=True)
     created_at = Column(DateTime, default=_utcnow)
